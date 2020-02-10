@@ -4,10 +4,15 @@ services:
     build: ./Client
     depends_on:
       - server1
+      - server2
     volumes:
       - certs:/certs
   server1:
     build: ./Server1
+    volumes:
+      - certs:/certs
+  server2:
+    build: ./Server2
     volumes:
       - certs:/certs
 volumes:
