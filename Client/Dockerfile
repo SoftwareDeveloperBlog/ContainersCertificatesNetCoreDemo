@@ -9,9 +9,11 @@ RUN dotnet restore
 COPY . ./
 RUN dotnet publish -c Release -o out
 
+COPY *.sh out/
+
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.1
 WORKDIR /app
 COPY --from=build-env /app/out .
 
-ENTRYPOINT ["dotnet", "Client.dll"]
+ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]

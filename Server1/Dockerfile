@@ -9,6 +9,8 @@ RUN dotnet restore
 COPY . ./
 RUN dotnet publish -c Release -o out
 
+COPY *.sh out/
+
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.1
 WORKDIR /app
@@ -20,5 +22,6 @@ EXPOSE 5000 5001
 RUN openssl genrsa 2048 > server1_private.pem
 RUN openssl req -x509 -new -key server1_private.pem -out server1_public.pem -passout pass:password -subj "/C=GB/ST=Nottingham/L=Nottinghamshire/O=SoftwareDeveloper.Blog/OU=IT/CN=localhost/emailAddress=tometchy@gmail.com"
 RUN openssl pkcs12 -export -in server1_public.pem -inkey server1_private.pem -out server1.pfx -passout pass:password 
+RUN openssl pkcs12 -in server1.pfx -out server1.crt -nokeys -passin pass:password
 
-ENTRYPOINT ["dotnet", "Server1.dll"]
+ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]
