@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  client:
+    build: ./Client
+    depends_on:
+      - server1
+#      - server2
+  server1:
+    build: ./Server1
