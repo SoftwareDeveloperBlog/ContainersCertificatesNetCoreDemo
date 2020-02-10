@@ -1,14 +1,32 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
 namespace Client
 {
     static class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
+            foreach (var file in Directory.GetFiles("/certs/", "*.pfx"))
+            {
+                try
+                {
+                    using (X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser, OpenFlags.ReadWrite))
+                    {
+                        store.Add(new X509Certificate2(file, "password", X509KeyStorageFlags.PersistKeySet));
+                        Console.WriteLine($"Cert: '{file}' added to store");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Could not add cert: '{file}' to store: {e}");
+                }
+            }
+
             var httpClient = new HttpClient();
             while (true)
             {
